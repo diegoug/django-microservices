@@ -1,0 +1,19 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Django rest framework</title>
+    </head>
+    <body>
+        <a href="{% url 'logout' %}">Logout</a>
+        <p>Count: {{ count }}</p>
+        <p>Next: {{ next }}</p>
+        <p>Previous: {{ previous }}</p>
+        {% for book in results %}
+        <li>{{ book }}</li>
+        {% endfor %}
+    </body>
+</html>

@@ -1,0 +1,29 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Django rest framework</title>
+    </head>
+    <body>
+        <div id="wrapper" class="wrapper">
+            <div class="item">
+                <form action="{% url 'login' %}" method="post">
+                    {% csrf_token %}
+                        <div id="tester" class="log-in">
+                            <div class="menu">
+                                <h1 class="sign">Log in</h1>
+                                <form action="." method="post" class="login_form">{% csrf_token %}
+                                    {{ form.as_p }}
+                                    <p class="submit"><button type="submit" name="submit" value="Login">Log in</button></p>
+                                    {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+                                </form>
+                            </div>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
