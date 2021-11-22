@@ -2,7 +2,7 @@
 # development -----------------------------------------------------------------
 # -----------------------------------------------------------------------------
 create-network:
-	docker network create django-rest
+	docker network create django-microservices
 
 start-development:
 # detect dinamic os path's
@@ -39,5 +39,5 @@ stop-development:
 build-development:
 	# django rest framework MS ------------------------------------------------
 	cp services/django_rest_framework_MS/requirements.txt docker/development/build/django_rest_framework_MS/
-	cd docker/development/build/django_rest_framework_MS/ && docker build -t "diegoug/django-rest-framework-ms-dev" .
+	cd docker/development/build/django_rest_framework_MS/ && docker build -t "diegoug/django-ms-dev" .
 	rm -rf docker/development/build/django_rest_framework_MS/requirements.txt

@@ -1,12 +1,12 @@
 version: "2.1"
 networks:
-  django-rest:
+  django-microservices:
     external: true
 services:
   # django --------------------------------------------------------------------
   django:
-    image: diegoug/django-rest-framework-ms-dev
-    container_name: django-rest-framework-ms-dev
+    image: diegoug/django-ms-dev
+    container_name: django-ms-dev
     command: /bin/sh -c "cd /opt/app && python3 manage.py runserver 0.0.0.0:${DJANGO_REST_FRAMEWORK_MS_PORT}"
     volumes:
       - ../../services/django_rest_framework_MS:/opt/app
@@ -24,19 +24,19 @@ services:
       - ${DJANGO_REST_FRAMEWORK_MS_PORT}:${DJANGO_REST_FRAMEWORK_MS_PORT}
       - ${DJANGO_REST_FRAMEWORK_MS_SSH}:22
     depends_on:
-      postgres-django-rest-framework-ms:
+      postgres-django-ms:
         condition: service_healthy  
     networks:
-      django-rest:
+      django-microservices:
         aliases:
           - ${DJANGO_REST_FRAMEWORK_MS_HOST}
   # ---------------------------------------------------------------------------
   # container services
   # ---------------------------------------------------------------------------
   # postgres ------------------------------------------------------------------
-  postgres-django-rest-framework-ms:
+  postgres-django-ms:
     image: postgres:13.2
-    container_name: postgres-django-rest-framework-ms-dev
+    container_name: postgres-django-ms-dev
     ports:
       - ${POSTGRES_DJANGO_REST_FRAMEWORK_MS_PORT}:5432
     environment:
@@ -44,13 +44,13 @@ services:
       - POSTGRES_USER=${POSTGRES_DJANGO_REST_FRAMEWORK_MS_USER}
       - POSTGRES_DB=${POSTGRES_DJANGO_REST_FRAMEWORK_MS_DATABASE_NAME}
     volumes:
-      - ${LOCAL_VAR}/lib/postgresql-django-rest-framework-ms-dev:/var/lib/postgresql/data
+      - ${LOCAL_VAR}/lib/postgresql-django-ms-dev:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_DJANGO_REST_FRAMEWORK_MS_USER} -d ${POSTGRES_DJANGO_REST_FRAMEWORK_MS_DATABASE_NAME}"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
-      django-rest:
+      django-microservices:
         aliases:
           - ${POSTGRES_DJANGO_REST_FRAMEWORK_MS_HOST}
