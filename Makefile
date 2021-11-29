@@ -42,19 +42,19 @@ build-development:
 	cd docker/development/build/backend_for_frontend_MS/ && docker build -t "diegoug/backend-for-frontend-ms-dev" .
 	rm -rf docker/development/build/backend_for_frontend_MS/requirements.txt
 	# Backend for frontend OC -------------------------------------------------
-	cp services/backend_for_frontend_OC/package.json docker/development/build/backend_for_frontend_OC/package.json
-	cd docker/development/build/backend_for_frontend_OC/ && docker build -t "diegoug/backend-for-frontend-oc-dev" .
-	rm -rf docker/development/build/backend_for_frontend_OC/package.json
+	cp services/orchestrator_MS/requirements.txt docker/development/build/orchestrator_MS/requirements.txt
+	cd docker/development/build/orchestrator_MS/ && docker build -t "diegoug/orchestrator-ms-dev" .
+	rm -rf docker/development/build/orchestrator_MS/requirements.txt
 	# User MS -----------------------------------------------------------------
 	cp services/user_MS/requirements.txt docker/development/build/user_MS/requirements.txt
 	cd docker/development/build/user_MS/ && docker build -t "diegoug/user-ms-dev" .
 	rm -rf docker/development/build/user_MS/requirements.txt
-	# service A - MS ----------------------------------------------------------
-	cp services/service_a_MS/requirements.txt docker/development/build/service_a_MS/requirements.txt
-	cd docker/development/build/service_a_MS/ && docker build -t "diegoug/service-a-ms-dev" .
-	rm -rf docker/development/build/service_a_MS/requirements.txt
-	# service B - MS ----------------------------------------------------------
-	cp services/service_b_MS/requirements.txt docker/development/build/service_b_MS/requirements.txt
-	cd docker/development/build/service_b_MS/ && docker build -t "diegoug/service-b-ms-dev" .
-	rm -rf docker/development/build/service_b_MS/requirements.txt
+	# author MS ----------------------------------------------------------
+	cp services/author_MS/requirements.txt docker/development/build/author_MS/requirements.txt
+	cd docker/development/build/author_MS/ && docker build -t "diegoug/service-a-ms-dev" .
+	rm -rf docker/development/build/author_MS/requirements.txt
+	# book MS ----------------------------------------------------------
+	cp services/book_MS/requirements.txt docker/development/build/book_MS/requirements.txt
+	cd docker/development/build/book_MS/ && docker build -t "diegoug/service-b-ms-dev" .
+	rm -rf docker/development/build/book_MS/requirements.txt
 
