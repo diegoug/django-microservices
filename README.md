@@ -1,7 +1,7 @@
 # Django Microservices
-Based on [Django REST framework + OAuth](https://github.com/diegoug/Django-REST-framework-OAuth)
+Based on [Django REST framework + OAuth project](https://dev.to/diegoug/django-rest-framework-oauth-pld)
 
-Django Basic Configuration to create micro services based on this Framework
+Configuring Django to work on a many Djangos microsevices architecture
 
 ## Index
 * [Dependencies](#dependencies)
@@ -120,7 +120,7 @@ in the following link we find the steps to copy our ssh and configure it in the 
 
 to download the repository, only need run the next command:
 
-`git clone git@github.com:diegoug/Django-REST-framework-OAuth.git`
+`git clone git@github.com:diegoug/`
 
 ### Windows Repository
 
@@ -143,6 +143,9 @@ Now we need run the next commands in order.
 ### create the network
 
 `$ make create-network`
+
+**NOTE:** In case and error appears like 'docker   could not find plugin bridge in v1 plugin registry: plugin not found' the solution can be done by using the command:
+`docker network create --driver nat ntwk-mnto`
 
 ### Install dependencies
 

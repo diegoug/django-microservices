@@ -1,56 +1,56 @@
 version: "2.1"
 networks:
-  django-microservices:
+  django-rest:
     external: true
 services:
   # django --------------------------------------------------------------------
   django:
-    image: diegoug/django-ms-dev
-    container_name: django-ms-dev
-    command: /bin/sh -c "cd /opt/app && python3 manage.py runserver 0.0.0.0:${DJANGO_REST_FRAMEWORK_MS_PORT}"
+    image: diegoug/django-rest-framework-ms-dev
+    container_name: django-rest-framework-ms-dev
+    command: /bin/sh -c "cd /opt/app && python3 manage.py runserver 0.0.0.0:${BACKEND_FOR_FRONTEND_MS_PORT}"
     volumes:
-      - ../../services/django_rest_framework_MS:/opt/app
+      - ../../services/backend_for_frontend_MS:/opt/app
       - ${LOCAL_SSH}/.ssh/id_rsa.pub:/tmp/authorized_keys:ro
     environment:
       - DEBUG=${DEBUG}
       - TEMPLATE_DEBUG=${TEMPLATE_DEBUG}
-      - DJANGO_REST_FRAMEWORK_MS_DJANGO_KEY=${DJANGO_REST_FRAMEWORK_MS_DJANGO_KEY}
-      - DJANGO_REST_FRAMEWORK_MS_NAME=${DJANGO_REST_FRAMEWORK_MS_NAME}
-      - POSTGRES_DJANGO_REST_FRAMEWORK_MS_DATABASE_NAME=${POSTGRES_DJANGO_REST_FRAMEWORK_MS_DATABASE_NAME}
-      - POSTGRES_DJANGO_REST_FRAMEWORK_MS_USER=${POSTGRES_DJANGO_REST_FRAMEWORK_MS_USER}
-      - POSTGRES_DJANGO_REST_FRAMEWORK_MS_PASSWORD=${POSTGRES_DJANGO_REST_FRAMEWORK_MS_PASSWORD}
-      - POSTGRES_DJANGO_REST_FRAMEWORK_MS_HOST=${POSTGRES_DJANGO_REST_FRAMEWORK_MS_HOST}
+      - BACKEND_FOR_FRONTEND_MS_DJANGO_KEY=${BACKEND_FOR_FRONTEND_MS_DJANGO_KEY}
+      - BACKEND_FOR_FRONTEND_MS_NAME=${BACKEND_FOR_FRONTEND_MS_NAME}
+      - POSTGRES_BACKEND_FOR_FRONTEND_MS_DATABASE_NAME=${POSTGRES_BACKEND_FOR_FRONTEND_MS_DATABASE_NAME}
+      - POSTGRES_BACKEND_FOR_FRONTEND_MS_USER=${POSTGRES_BACKEND_FOR_FRONTEND_MS_USER}
+      - POSTGRES_BACKEND_FOR_FRONTEND_MS_PASSWORD=${POSTGRES_BACKEND_FOR_FRONTEND_MS_PASSWORD}
+      - POSTGRES_BACKEND_FOR_FRONTEND_MS_HOST=${POSTGRES_BACKEND_FOR_FRONTEND_MS_HOST}
     ports:
-      - ${DJANGO_REST_FRAMEWORK_MS_PORT}:${DJANGO_REST_FRAMEWORK_MS_PORT}
-      - ${DJANGO_REST_FRAMEWORK_MS_SSH}:22
+      - ${BACKEND_FOR_FRONTEND_MS_PORT}:${BACKEND_FOR_FRONTEND_MS_PORT}
+      - ${BACKEND_FOR_FRONTEND_MS_SSH}:22
     depends_on:
-      postgres-django-ms:
+      postgres-django-rest-framework-ms:
         condition: service_healthy  
     networks:
-      django-microservices:
+      django-rest:
         aliases:
-          - ${DJANGO_REST_FRAMEWORK_MS_HOST}
+          - ${BACKEND_FOR_FRONTEND_MS_HOST}
   # ---------------------------------------------------------------------------
   # container services
   # ---------------------------------------------------------------------------
   # postgres ------------------------------------------------------------------
-  postgres-django-ms:
+  postgres-django-rest-framework-ms:
     image: postgres:13.2
-    container_name: postgres-django-ms-dev
+    container_name: postgres-django-rest-framework-ms-dev
     ports:
-      - ${POSTGRES_DJANGO_REST_FRAMEWORK_MS_PORT}:5432
+      - ${POSTGRES_BACKEND_FOR_FRONTEND_MS_PORT}:5432
     environment:
-      - POSTGRES_PASSWORD=${POSTGRES_DJANGO_REST_FRAMEWORK_MS_PASSWORD}
-      - POSTGRES_USER=${POSTGRES_DJANGO_REST_FRAMEWORK_MS_USER}
-      - POSTGRES_DB=${POSTGRES_DJANGO_REST_FRAMEWORK_MS_DATABASE_NAME}
+      - POSTGRES_PASSWORD=${POSTGRES_BACKEND_FOR_FRONTEND_MS_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_BACKEND_FOR_FRONTEND_MS_USER}
+      - POSTGRES_DB=${POSTGRES_BACKEND_FOR_FRONTEND_MS_DATABASE_NAME}
     volumes:
-      - ${LOCAL_VAR}/lib/postgresql-django-ms-dev:/var/lib/postgresql/data
+      - ${LOCAL_VAR}/lib/postgresql-django-rest-framework-ms-dev:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_DJANGO_REST_FRAMEWORK_MS_USER} -d ${POSTGRES_DJANGO_REST_FRAMEWORK_MS_DATABASE_NAME}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_BACKEND_FOR_FRONTEND_MS_USER} -d ${POSTGRES_BACKEND_FOR_FRONTEND_MS_DATABASE_NAME}"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
-      django-microservices:
+      django-rest:
         aliases:
-          - ${POSTGRES_DJANGO_REST_FRAMEWORK_MS_HOST}
+          - ${POSTGRES_BACKEND_FOR_FRONTEND_MS_HOST}

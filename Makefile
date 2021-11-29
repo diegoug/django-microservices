@@ -37,7 +37,24 @@ stop-development:
 	cd docker/development/ && sed -i.bu $'/LOCAL_SSH='$(LOCAL_SSH)$'/d' .env
 
 build-development:
-	# django rest framework MS ------------------------------------------------
-	cp services/django_rest_framework_MS/requirements.txt docker/development/build/django_rest_framework_MS/
-	cd docker/development/build/django_rest_framework_MS/ && docker build -t "diegoug/django-ms-dev" .
-	rm -rf docker/development/build/django_rest_framework_MS/requirements.txt
+	# Backend for frontend MS -------------------------------------------------
+	cp services/backend_for_frontend_MS/requirements.txt docker/development/build/backend_for_frontend_MS/requirements.txt
+	cd docker/development/build/backend_for_frontend_MS/ && docker build -t "diegoug/backend-for-frontend-ms-dev" .
+	rm -rf docker/development/build/backend_for_frontend_MS/requirements.txt
+	# Backend for frontend OC -------------------------------------------------
+	cp services/backend_for_frontend_OC/package.json docker/development/build/backend_for_frontend_OC/package.json
+	cd docker/development/build/backend_for_frontend_OC/ && docker build -t "diegoug/backend-for-frontend-oc-dev" .
+	rm -rf docker/development/build/backend_for_frontend_OC/package.json
+	# User MS -----------------------------------------------------------------
+	cp services/user_MS/requirements.txt docker/development/build/user_MS/requirements.txt
+	cd docker/development/build/user_MS/ && docker build -t "diegoug/user-ms-dev" .
+	rm -rf docker/development/build/user_MS/requirements.txt
+	# service A - MS ----------------------------------------------------------
+	cp services/service_a_MS/requirements.txt docker/development/build/service_a_MS/requirements.txt
+	cd docker/development/build/service_a_MS/ && docker build -t "diegoug/service-a-ms-dev" .
+	rm -rf docker/development/build/service_a_MS/requirements.txt
+	# service B - MS ----------------------------------------------------------
+	cp services/service_b_MS/requirements.txt docker/development/build/service_b_MS/requirements.txt
+	cd docker/development/build/service_b_MS/ && docker build -t "diegoug/service-b-ms-dev" .
+	rm -rf docker/development/build/service_b_MS/requirements.txt
+
