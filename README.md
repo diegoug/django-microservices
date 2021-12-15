@@ -1,7 +1,7 @@
 # Django Microservices
 Based on [Django REST framework + OAuth project](https://dev.to/diegoug/django-rest-framework-oauth-pld)
 
-Configuring Django to work on a many Djangos microsevices architecture
+Configuring Django to work on a many Djangos in a microsevices architecture
 
 ## Index
 * [Dependencies](#dependencies)

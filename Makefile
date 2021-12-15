@@ -37,24 +37,23 @@ stop-development:
 	cd docker/development/ && sed -i.bu $'/LOCAL_SSH='$(LOCAL_SSH)$'/d' .env
 
 build-development:
-	# Backend for frontend MS -------------------------------------------------
-	cp services/backend_for_frontend_MS/requirements.txt docker/development/build/backend_for_frontend_MS/requirements.txt
-	cd docker/development/build/backend_for_frontend_MS/ && docker build -t "diegoug/backend-for-frontend-ms-dev" .
-	rm -rf docker/development/build/backend_for_frontend_MS/requirements.txt
-	# Backend for frontend OC -------------------------------------------------
-	cp services/orchestrator_MS/requirements.txt docker/development/build/orchestrator_MS/requirements.txt
-	cd docker/development/build/orchestrator_MS/ && docker build -t "diegoug/orchestrator-ms-dev" .
-	rm -rf docker/development/build/orchestrator_MS/requirements.txt
-	# User MS -----------------------------------------------------------------
-	cp services/user_MS/requirements.txt docker/development/build/user_MS/requirements.txt
-	cd docker/development/build/user_MS/ && docker build -t "diegoug/user-ms-dev" .
-	rm -rf docker/development/build/user_MS/requirements.txt
-	# author MS ----------------------------------------------------------
-	cp services/author_MS/requirements.txt docker/development/build/author_MS/requirements.txt
-	cd docker/development/build/author_MS/ && docker build -t "diegoug/service-a-ms-dev" .
-	rm -rf docker/development/build/author_MS/requirements.txt
-	# book MS ----------------------------------------------------------
-	cp services/book_MS/requirements.txt docker/development/build/book_MS/requirements.txt
-	cd docker/development/build/book_MS/ && docker build -t "diegoug/service-b-ms-dev" .
-	rm -rf docker/development/build/book_MS/requirements.txt
-
+	# Backend for frontend ms -------------------------------------------------
+	cp services/backend_for_frontend_ms/requirements.txt docker/development/build/backend_for_frontend_ms/requirements.txt
+	cd docker/development/build/backend_for_frontend_ms/ && docker build -t "diegoug/backend_for_frontend_ms_dev" .
+	rm -rf docker/development/build/backend_for_frontend_ms/requirements.txt
+	# orchestrator ms ---------------------------------------------------------
+	cp services/orchestrator_ms/requirements.txt docker/development/build/orchestrator_ms/requirements.txt
+	cd docker/development/build/orchestrator_ms/ && docker build -t "diegoug/orchestrator_ms_dev" .
+	rm -rf docker/development/build/orchestrator_ms/requirements.txt
+	# author ms ----------------------------------------------------------
+	cp services/author_ms/requirements.txt docker/development/build/author_ms/requirements.txt
+	cd docker/development/build/author_ms/ && docker build -t "diegoug/author_ms_dev" .
+	rm -rf docker/development/build/author_ms/requirements.txt
+	# book ms ----------------------------------------------------------
+	cp services/book_ms/requirements.txt docker/development/build/book_ms/requirements.txt
+	cd docker/development/build/book_ms/ && docker build -t "diegoug/book_ms_dev" .
+	rm -rf docker/development/build/book_ms/requirements.txt
+	# user ms -----------------------------------------------------------------
+	cp services/user_ms/requirements.txt docker/development/build/user_ms/requirements.txt
+	cd docker/development/build/user_ms/ && docker build -t "diegoug/user_ms_dev" .
+	rm -rf docker/development/build/user_ms/requirements.txt

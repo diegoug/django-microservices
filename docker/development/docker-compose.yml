@@ -1,56 +1,113 @@
 version: "2.1"
 networks:
-  django-rest:
+  django-microservices:
     external: true
 services:
-  # django --------------------------------------------------------------------
-  django:
-    image: diegoug/django-rest-framework-ms-dev
-    container_name: django-rest-framework-ms-dev
-    command: /bin/sh -c "cd /opt/app && python3 manage.py runserver 0.0.0.0:${BACKEND_FOR_FRONTEND_MS_PORT}"
+  # ---------------------------------------------------------------------------
+  # container services
+  # ---------------------------------------------------------------------------
+  # backend_for_frontend_ms
+  backend_for_frontend_ms_dev:
+    image: diegoug/backend_for_frontend_ms_dev
+    container_name: backend_for_frontend_ms_dev
+    command: /bin/sh -c "while true; do echo hello world; sleep 1; done"
+    #command: /bin/sh -c "cd /opt/app && python3 manage.py runserver 0.0.0.0:${BACKEND_FOR_FRONTEND_MS_PORT}"
     volumes:
-      - ../../services/backend_for_frontend_MS:/opt/app
+      - ../../services/backend_for_frontend_ms:/opt/app
       - ${LOCAL_SSH}/.ssh/id_rsa.pub:/tmp/authorized_keys:ro
     environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}
       - DEBUG=${DEBUG}
       - TEMPLATE_DEBUG=${TEMPLATE_DEBUG}
-      - BACKEND_FOR_FRONTEND_MS_DJANGO_KEY=${BACKEND_FOR_FRONTEND_MS_DJANGO_KEY}
-      - BACKEND_FOR_FRONTEND_MS_NAME=${BACKEND_FOR_FRONTEND_MS_NAME}
-      - POSTGRES_BACKEND_FOR_FRONTEND_MS_DATABASE_NAME=${POSTGRES_BACKEND_FOR_FRONTEND_MS_DATABASE_NAME}
-      - POSTGRES_BACKEND_FOR_FRONTEND_MS_USER=${POSTGRES_BACKEND_FOR_FRONTEND_MS_USER}
-      - POSTGRES_BACKEND_FOR_FRONTEND_MS_PASSWORD=${POSTGRES_BACKEND_FOR_FRONTEND_MS_PASSWORD}
-      - POSTGRES_BACKEND_FOR_FRONTEND_MS_HOST=${POSTGRES_BACKEND_FOR_FRONTEND_MS_HOST}
+      - DJANGO_MICROSERVICES_KEY=${DJANGO_MICROSERVICES_KEY}
     ports:
       - ${BACKEND_FOR_FRONTEND_MS_PORT}:${BACKEND_FOR_FRONTEND_MS_PORT}
       - ${BACKEND_FOR_FRONTEND_MS_SSH}:22
     depends_on:
-      postgres-django-rest-framework-ms:
+      postgres_user_ms_dev:
         condition: service_healthy  
     networks:
-      django-rest:
+      django-microservices:
         aliases:
           - ${BACKEND_FOR_FRONTEND_MS_HOST}
+  orchestrator_ms_dev:
+    image: diegoug/orchestrator_ms_dev
+    container_name: orchestrator_ms_dev
+    command: /bin/sh -c "while true; do echo hello world; sleep 1; done"
+    volumes:
+      - ../../services/orchestrator_ms:/opt/app
+      - ${LOCAL_SSH}/.ssh/id_rsa.pub:/tmp/authorized_keys:ro
+    networks:
+      django-microservices:
+        aliases:
+          - ${ORCHESTATOR_MS_HOST}
+  author_ms_dev:
+    image: diegoug/author_ms_dev
+    container_name: author_ms_dev
+    command: /bin/sh -c "while true; do echo hello world; sleep 1; done"
+    volumes:
+      - ../../services/orchestrator_ms:/opt/app
+      - ${LOCAL_SSH}/.ssh/id_rsa.pub:/tmp/authorized_keys:ro
+    networks:
+      django-microservices:
+        aliases:
+          - ${AUTHOR_MS_HOST}
+  book_ms_dev:
+    image: diegoug/book_ms_dev
+    container_name: book_ms_dev
+    command: /bin/sh -c "while true; do echo hello world; sleep 1; done"
+    volumes:
+      - ../../services/book_ms:/opt/app
+      - ${LOCAL_SSH}/.ssh/id_rsa.pub:/tmp/authorized_keys:ro
+    networks:
+      django-microservices:
+        aliases:
+          - ${BOOK_MS_HOST}
+  user_ms_dev:
+    image: diegoug/user_ms_dev
+    container_name: user_ms_dev
+    command: /bin/sh -c "while true; do echo hello world; sleep 1; done"
+    volumes:
+      - ../../services/user_ms:/opt/app
+      - ../../common/profiles:/opt/app/profiles
+      - ${LOCAL_SSH}/.ssh/id_rsa.pub:/tmp/authorized_keys:ro
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}
+      - DEBUG=${DEBUG}
+      - TEMPLATE_DEBUG=${TEMPLATE_DEBUG}
+      - DJANGO_MICROSERVICES_KEY=${DJANGO_MICROSERVICES_KEY}
+      - POSTGRES_USER_MS_DATABASE_NAME=${POSTGRES_USER_MS_DATABASE_NAME}
+      - POSTGRES_USER_MS_USER=${POSTGRES_USER_MS_USER}
+      - POSTGRES_USER_MS_PASSWORD=${POSTGRES_USER_MS_PASSWORD}
+      - POSTGRES_USER_MS_HOST=${POSTGRES_USER_MS_HOST}
+    ports:
+      - ${USER_MS_PORT}:${USER_MS_PORT}
+      - ${USER_MS_SSH}:22
+    networks:
+      django-microservices:
+        aliases:
+          - ${USER_MS_HOST}
   # ---------------------------------------------------------------------------
   # container services
   # ---------------------------------------------------------------------------
-  # postgres ------------------------------------------------------------------
-  postgres-django-rest-framework-ms:
-    image: postgres:13.2
-    container_name: postgres-django-rest-framework-ms-dev
+  # postgres user ms
+  postgres_user_ms_dev:
+    image: postgres:14.1
+    container_name: postgres_user_ms_dev
     ports:
-      - ${POSTGRES_BACKEND_FOR_FRONTEND_MS_PORT}:5432
+      - ${POSTGRES_USER_MS_PORT}:5432
     environment:
-      - POSTGRES_PASSWORD=${POSTGRES_BACKEND_FOR_FRONTEND_MS_PASSWORD}
-      - POSTGRES_USER=${POSTGRES_BACKEND_FOR_FRONTEND_MS_USER}
-      - POSTGRES_DB=${POSTGRES_BACKEND_FOR_FRONTEND_MS_DATABASE_NAME}
+      - POSTGRES_PASSWORD=${POSTGRES_USER_MS_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER_MS_USER}
+      - POSTGRES_DB=${POSTGRES_USER_MS_DATABASE_NAME}
     volumes:
-      - ${LOCAL_VAR}/lib/postgresql-django-rest-framework-ms-dev:/var/lib/postgresql/data
+      - ${LOCAL_VAR}/lib/postgres_user_ms_dev:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_BACKEND_FOR_FRONTEND_MS_USER} -d ${POSTGRES_BACKEND_FOR_FRONTEND_MS_DATABASE_NAME}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER_MS_USER} -d ${POSTGRES_USER_MS_DATABASE_NAME}"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
-      django-rest:
+      django-microservices:
         aliases:
-          - ${POSTGRES_BACKEND_FOR_FRONTEND_MS_HOST}
+          - ${POSTGRES_USER_MS_HOST}
