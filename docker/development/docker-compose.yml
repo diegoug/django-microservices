@@ -10,8 +10,6 @@ services:
   backend_for_frontend_ms_dev:
     image: diegoug/backend_for_frontend_ms_dev
     container_name: backend_for_frontend_ms_dev
-    command: /bin/sh -c "while true; do echo hello world; sleep 1; done"
-    #command: /bin/sh -c "cd /opt/app && python3 manage.py runserver 0.0.0.0:${BACKEND_FOR_FRONTEND_MS_PORT}"
     volumes:
       - ../../services/backend_for_frontend_ms:/opt/app
       - ${LOCAL_SSH}/.ssh/id_rsa.pub:/tmp/authorized_keys:ro
@@ -33,7 +31,6 @@ services:
   orchestrator_ms_dev:
     image: diegoug/orchestrator_ms_dev
     container_name: orchestrator_ms_dev
-    command: /bin/sh -c "while true; do echo hello world; sleep 1; done"
     volumes:
       - ../../services/orchestrator_ms:/opt/app
       - ${LOCAL_SSH}/.ssh/id_rsa.pub:/tmp/authorized_keys:ro
@@ -44,7 +41,6 @@ services:
   author_ms_dev:
     image: diegoug/author_ms_dev
     container_name: author_ms_dev
-    command: /bin/sh -c "while true; do echo hello world; sleep 1; done"
     volumes:
       - ../../services/orchestrator_ms:/opt/app
       - ${LOCAL_SSH}/.ssh/id_rsa.pub:/tmp/authorized_keys:ro
@@ -66,7 +62,6 @@ services:
   user_ms_dev:
     image: diegoug/user_ms_dev
     container_name: user_ms_dev
-    command: /bin/sh -c "while true; do echo hello world; sleep 1; done"
     volumes:
       - ../../services/user_ms:/opt/app
       - ../../common/profiles:/opt/app/profiles
