@@ -5,14 +5,25 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Django",
+            "name": "user_ms",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/manage.py",
+            "justMyCode": false,
             "args": [
                 "runserver",
-                "0.0.0.0:8081",
+                "0.0.0.0:8084",
                 "--noreload"
+            ]
+        },
+        {
+            "name": "user_ms tests",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "justMyCode": false,
+            "args": [
+                "test"
             ]
         }
     ]
