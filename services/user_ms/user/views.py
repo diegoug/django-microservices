@@ -1,38 +1,60 @@
-import json
-
-from math import ceil
-from decimal import Decimal
-from oauth2_provider.views.generic import ProtectedResourceView
 from oauth2_provider.contrib.rest_framework import OAuth2Authentication, TokenHasReadWriteScope
 
-from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import View
-from django.utils.decorators import method_decorator
-from django.http import HttpResponse, HttpResponseForbidden
-from django.core.exceptions import ValidationError
-from django.contrib.auth.decorators import login_required, permission_required
-from django.db.models.fields.related import ManyToManyField
-
-from rest_framework import viewsets, filters
-from rest_framework import mixins
+from rest_framework import status, viewsets, filters, mixins
+from rest_framework.response import Response
+from rest_framework.decorators import action
 
 from profiles.models import User
 
-class UserViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, 
-                  mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
-                  mixins.DestroyModelMixin, viewsets.GenericViewSet):
-    """
-    View to users in the system.
-    """
+from .serializers import UserModelSerializer, UserUpdateModelSerializer, UserLoginSerializer, UserSignUpSerializer
+
+class UserViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, 
+                  mixins.UpdateModelMixin, mixins.DestroyModelMixin, 
+                  viewsets.GenericViewSet):
+
     queryset = User.objects.all()
-    authentication_classes = OAuth2Authentication
+    serializer_class = UserModelSerializer
+    
+    authentication_classes = [OAuth2Authentication]
+    
     search_fields = ['email', 'first_name', 'last_name']
     filter_backends = [filters.SearchFilter]
+
+    lookup_field = 'email'
+    lookup_value_regex = '[\w.@+-]+'
     
-    def list(self, request, *args, **kwargs):
-        """
-        Return a list of all users.
-        """
-        # here you can place business logic
-        # I suggest importing a function from ./businnes.py
-        return super().list(request, *args, **kwargs)
+    # custom actions ----------------------------------------------------------
+    def get_permissions(self):
+        if 'post' in self.action_map:
+            if self.action_map['post'] in ['signup', 'login']:
+                return []
+        return super(UserViewSet, self).get_permissions()
+    
+    def get_serializer_class(self):
+        if self.action == 'signup':
+            return UserSignUpSerializer
+        if self.action == 'login':
+            return UserLoginSerializer
+        if self.action == 'update':
+            return UserUpdateModelSerializer
+        return super(UserViewSet, self).get_serializer_class()
+
+    @action(detail=False, methods=['post'])
+    def login(self, request):
+        serializer = UserLoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user, client_secret, client_id = serializer.save()
+        data = {
+            'user': UserModelSerializer(user).data,
+            'client_secret': client_secret,
+            'client_id': client_id
+        }
+        return Response(data, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['post'])
+    def signup(self, request):
+        serializer = UserSignUpSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        data = UserModelSerializer(user).data
+        return Response(data, status=status.HTTP_201_CREATED)

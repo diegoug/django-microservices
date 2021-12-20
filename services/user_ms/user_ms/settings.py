@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # common microservices user app
     'oauth2_provider',
+    'rest_framework',
     'profiles',
     # microservice
     'user'
@@ -188,12 +189,12 @@ LOCALE_PATHS = (
 # https://www.django-rest-framework.org/api-guide/pagination/
 
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.'
-                                'LimitOffsetPagination',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 10,
     'MAX_PAGE_SIZE': 100,
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
+        'oauth2_provider.contrib.rest_framework.TokenHasReadWriteScope'
     )
 }
 
@@ -203,7 +204,8 @@ REST_FRAMEWORK = {
 OAUTH2_PROVIDER = {
     # this is the list of available scopes
     'SCOPES': {'read': 'Read scope', 'write': 'Write scope', 
-               'groups': 'Access to your groups'}
+               'groups': 'Access to your groups', 
+               'introspection': 'introspection'}
 }
 
 # external credentials --------------------------------------------------------
