@@ -24,7 +24,7 @@ class AbstractUser(AbstractBaseUser, PermissionsMixin):
 
 class User(AbstractUser):
     uuid = models.UUIDField(
-        db_index=True, default=uuid_lib.uuid4, editable=False)
+        primary_key=True, default=uuid_lib.uuid4, editable=False)
     username = models.CharField(
         _('username'), max_length=255, unique=True,
         validators=[
