@@ -12,6 +12,7 @@ RUN apt-get -y install python3.9 python3.9-dev
 RUN apt-get -y install python3-pkgconfig python3-setuptools python3-pip
 RUN apt-get -y install deepin-gettext-tools
 RUN apt-get -y install openssh-server
+RUN ln -s /usr/bin/python3.8 /usr/bin/python
 # postgresql packeges
 RUN apt-get -y install postgresql libpq-dev postgresql-client postgresql-client-common
 # install requirements

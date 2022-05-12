@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from profiles.models import User
 
 from oauth2_provider.models import AccessToken, Application, Grant, \
-    RefreshToken
+    RefreshToken, IDToken
 
 
 class EmailRequiredMixin(object):
@@ -40,12 +40,6 @@ class UserModelAdmin(UserAdmin):
             }
         ),
     )
-    fieldsets = UserAdmin.fieldsets + (
-        (_('extrafields'), {'fields': ('photo', 'phone', 'cell_phone', 
-        'document_number', 'type_document', 'specialty', 'charge', 
-        'city', 'country', 'company_area', 'company', 'address')}),
-    )
-    #import pdb; pdb.set_trace()
 
 admin.site.register(User, UserModelAdmin)
 
@@ -62,3 +56,4 @@ admin.site.register(AccessToken)
 admin.site.register(Application)
 admin.site.register(Grant)
 admin.site.register(RefreshToken)
+admin.site.register(IDToken)

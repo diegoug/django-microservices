@@ -8,16 +8,13 @@ RUN apt-get update && apt-get -y upgrade
 # basic packages
 RUN apt-get -y install build-essential
 RUN apt-get -y install libxml2-dev libxmlsec1-dev libxmlsec1-openssl
-RUN apt-get -y install python3.9 python3.9-dev
+RUN apt-get -y install python3.8-dev
 RUN apt-get -y install python3-pkgconfig python3-setuptools python3-pip
 RUN apt-get -y install deepin-gettext-tools
 RUN apt-get -y install openssh-server
+RUN ln -s /usr/bin/python3.8 /usr/bin/python
 # postgresql packeges
 RUN apt-get -y install postgresql libpq-dev postgresql-client postgresql-client-common
-# install requirements
-COPY requirements.txt /tmp/requirements.txt
-RUN pip3 install -r /tmp/requirements.txt
-RUN rm -f /tmp/requirements.txt
 # install entry ssh
 RUN mkdir /var/run/sshd
 COPY entry.tar.gz /entry.tar.gz
@@ -32,3 +29,7 @@ ENTRYPOINT ["/entry.sh"]
 CMD ["/usr/sbin/sshd", "-D", "-f", "/etc/ssh/sshd_config"]
 # work directory
 WORKDIR /opt/app
+# install requirements # Last action, only if change requirements
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install -r /tmp/requirements.txt
+RUN rm -f /tmp/requirements.txt

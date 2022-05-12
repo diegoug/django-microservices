@@ -14,7 +14,7 @@ from pathlib import Path
 from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -25,24 +25,45 @@ SECRET_KEY = os.environ.get('DJANGO_MICROSERVICES_KEY', '')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.environ.get('DEBUG', False) == 'True' else False
 
-# hosts -----------------------------------------------------------------------
-SERVICE_NAME = os.environ.get('POSTGRES_USER_MS_DATABASE_NAME', '')
+# Internationalization --------------------------------------------------------
+# https://docs.djangoproject.com/en/4.0/topics/i18n/
 
+TIME_ZONE = 'UTC'
+
+USE_TZ = True
+USE_I18N = True
+USE_L10N = False
+
+# Language
+LANGUAGE_CODE = 'en-us'
+LANGUAGES = (
+    ('en', _('English')),
+    ('es', _('Spanish')),
+)
+
+# Define url folder language
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'locale'),
+)
+
+# hosts -----------------------------------------------------------------------
 DOMAIN_NAME = os.environ.get('DOMAIN_NAME', '')
+
+THIS_SERVICE = os.environ.get('USER_MS_HOST', '')
+SERVICE_BACKEND_FOR_FROTEND = os.environ.get(
+    'BACKEND_FOR_FRONTEND_MS_HOST', '')
+ORCHESTATOR_MS_HOST = os.environ.get('ORCHESTATOR_MS_HOST', '')
 
 ALLOWED_HOSTS = []
 ALLOWED_MICROSERVICES = []
 
-if DEBUG:
-    SERVICE_ALIAS = 'dev'
-    ALLOWED_HOSTS.append(
-        '{}.{}'.format((SERVICE_NAME).replace('_','-'), DOMAIN_NAME))
-else:
-    SERVICE_ALIAS = 'prod'
-    ALLOWED_HOSTS.append(
-        '{}.{}'.format(SERVICE_NAME, DOMAIN_NAME))
-
-ALLOWED_MICROSERVICES.append('{}_{}'.format(SERVICE_NAME, SERVICE_ALIAS))
+# Allowed Hosts
+ALLOWED_HOSTS.append('{}.{}'.format(
+    THIS_SERVICE, DOMAIN_NAME))
+# Allowed Microservices
+ALLOWED_MICROSERVICES.append(THIS_SERVICE)
+ALLOWED_MICROSERVICES.append(SERVICE_BACKEND_FOR_FROTEND)
+ALLOWED_MICROSERVICES.append(ORCHESTATOR_MS_HOST)
 
 ALLOWED_HOSTS.extend(ALLOWED_MICROSERVICES)
 
@@ -60,8 +81,9 @@ INSTALLED_APPS = [
     # common microservices user app
     'oauth2_provider',
     'rest_framework',
+    'rest_framework.authtoken',
     'profiles',
-    # microservice
+    # service
     'user'
 ]
 
@@ -69,14 +91,20 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    '{}.middleware.TimezoneMiddleware'.format(SERVICE_NAME),
+    'user_ms.middleware.TimezoneMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'user_ms.middleware.CustomHeaderMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
-ROOT_URLCONF = '{}.urls'.format(SERVICE_NAME)
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.RemoteUserBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+ROOT_URLCONF = 'user_ms.urls'
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
@@ -98,7 +126,7 @@ TEMPLATES = [
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
-STATIC_URL = '/{}/static/'.format(SERVICE_NAME)
+STATIC_URL = '/user_ms/static/'
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/var/www/example.com/media/"
@@ -107,9 +135,9 @@ MEDIA_ROOT = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'media')
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://example.com/media/", "http://media.example.com/"
-MEDIA_URL = '/{}/media/'.format(SERVICE_NAME)
+MEDIA_URL = '/user_ms/media/'
 
-WSGI_APPLICATION = '{}.wsgi.application'.format(SERVICE_NAME)
+WSGI_APPLICATION = 'user_ms.wsgi.application'
 
 AUTH_USER_MODEL = 'profiles.User'
 
@@ -130,10 +158,6 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-
-DATABASE_ROUTERS = [
-    '{}.django_admin_db_router.DjangoRouter'.format(SERVICE_NAME)
-]
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 3000
 
@@ -163,33 +187,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization --------------------------------------------------------
-# https://docs.djangoproject.com/en/4.0/topics/i18n/
-
-TIME_ZONE = 'UTC'
-
-USE_TZ = True
-USE_I18N = True
-USE_L10N = False
-
-# Language
-LANGUAGE_CODE = 'en-us'
-LANGUAGES = (
-    ('en', _('English')),
-    ('es', _('Spanish')),
-)
-
-# Define url folder language
-LOCALE_PATHS = (
-    os.path.join(BASE_DIR, 'locale'),
-)
-
 # Django rest framework -------------------------------------------------------
 # https://www.django-rest-framework.org/api-guide/pagination/
 
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'DEFAULT_PAGINATION_CLASS': 
+        'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 10,
     'MAX_PAGE_SIZE': 100,
     'DEFAULT_PERMISSION_CLASSES': (
@@ -203,9 +206,14 @@ REST_FRAMEWORK = {
 
 OAUTH2_PROVIDER = {
     # this is the list of available scopes
-    'SCOPES': {'read': 'Read scope', 'write': 'Write scope', 
-               'groups': 'Access to your groups', 
-               'introspection': 'introspection'}
+    'SCOPES': {
+        'read': 'Read scope', 
+        'write': 'Write scope', 
+        'groups': 'Access to your groups', 
+        'introspection': 'introspection'
+    }
 }
 
-# external credentials --------------------------------------------------------
+# Microservices ---------------------------------------------------------------
+
+# Third-Party providers -------------------------------------------------------

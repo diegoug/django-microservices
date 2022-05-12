@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../../usr/local/lib/python3.8/dist-packages/django"
+		},
+		{
+			"path": "../../../usr/local/lib/python3.8/dist-packages/rest_framework"
+		}
+	],
+	"settings": {}
+}

@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../../usr/local/lib/python3.8/dist-packages/django"
+		},
+		{
+			"path": "../../../usr/local/lib/python3.8/dist-packages/rest_framework"
+		},
+		{
+			"path": "../../../usr/local/lib/python3.8/dist-packages/oauth2_provider"
+		}
+	],
+	"settings": {}
+}

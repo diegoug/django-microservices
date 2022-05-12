@@ -20,13 +20,13 @@ build-development:
 	cd docker/development/build/orchestrator_ms/ && docker build -t "diegoug/orchestrator_ms_dev" .
 	rm -rf docker/development/build/orchestrator_ms/requirements.txt
 	# author ms ----------------------------------------------------------
-	cp services/author_ms/requirements.txt docker/development/build/author_ms/requirements.txt
-	cd docker/development/build/author_ms/ && docker build -t "diegoug/author_ms_dev" .
-	rm -rf docker/development/build/author_ms/requirements.txt
+	# cp services/author_ms/requirements.txt docker/development/build/author_ms/requirements.txt
+	# cd docker/development/build/author_ms/ && docker build -t "diegoug/author_ms" .
+	# rm -rf docker/development/build/author_ms/requirements.txt
 	# book ms ----------------------------------------------------------
-	cp services/book_ms/requirements.txt docker/development/build/book_ms/requirements.txt
-	cd docker/development/build/book_ms/ && docker build -t "diegoug/book_ms_dev" .
-	rm -rf docker/development/build/book_ms/requirements.txt
+	# cp services/book_ms/requirements.txt docker/development/build/book_ms/requirements.txt
+	# cd docker/development/build/book_ms/ && docker build -t "diegoug/book_ms" .
+	# rm -rf docker/development/build/book_ms/requirements.txt
 	# user ms -----------------------------------------------------------------
 	cp services/user_ms/requirements.txt docker/development/build/user_ms/requirements.txt
 	cd docker/development/build/user_ms/ && docker build -t "diegoug/user_ms_dev" .

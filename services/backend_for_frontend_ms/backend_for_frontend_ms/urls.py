@@ -1,4 +1,4 @@
-"""backend_for_frontend_MS URL Configuration
+"""backend_for_frontend_ms URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.2/topics/http/urls/
@@ -13,27 +13,23 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf.urls import url
 from django.conf import settings
 from django.contrib import admin
 from django.urls import path, re_path, include
 from django.contrib.auth import views as auth_views
+from django.conf.urls.static import static
 
-from rest_framework.renderers import TemplateHTMLRenderer
-
-from .views import OAuthAplication
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
-    url(r'^oauth/aplication/', 
-        OAuthAplication.as_view({
-            'get': 'retireve'
-        }, renderer_classes=[TemplateHTMLRenderer]), 
-        name='oauth_client_credentials'),
-    url(r'^$', auth_views.LoginView.as_view(
-        template_name='authentication/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(
-         next_page=settings.LOGOUT_REDIRECT_URL), name='logout'),
-    re_path(r'^library/', include('library.urls')),
-]
+    path('admin/', 
+        admin.site.urls),
+    re_path(r'^$', 
+        auth_views.LoginView.as_view(
+            template_name='authentication/login.html', 
+            redirect_authenticated_user=True), name='login'),
+    path('logout/', 
+        auth_views.LogoutView.as_view(
+            next_page=settings.LOGOUT_REDIRECT_URL), name='logout'),
+    re_path(r'^user/', 
+        include('user_ms.urls')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
